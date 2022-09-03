@@ -6,10 +6,10 @@
         <h2>简单的CURD</h2>
     </div>
     <div class="query-box">
-        <el-input v-model="qryInput" placeholder="请输入姓名搜索" />
-        <el-button type="primary">增加</el-button>
+        <el-input class="query-Input" v-model="qryInput" placeholder="请输入姓名搜索" />
+        <el-button type="primary" @click="handleAdd">增加</el-button>
     </div>
-<!--标题-->
+<!--table-->
 <el-table  border
 ref="multipleTableRef"
 :data="tableData" 
@@ -17,21 +17,46 @@ style="width: 100%"
 @selection-change ="handleSelectionChange"
 >
     <el-table-column type="selection" width="55" />
-    <el-table-column fixed prop="date" label="Date" width="150" />
-    <el-table-column prop="name" label="Name" width="120" />
-    <el-table-column prop="state" label="State" width="120" />
-    <el-table-column prop="city" label="City" width="120" />
-    <el-table-column prop="address" label="Address" width="600" />
-    <el-table-column prop="zip" label="Zip" width="120" />
-    <el-table-column fixed="right" label="Operations" width="120">
+    <el-table-column prop="name" label="姓名" width="120" />
+    <el-table-column prop="email" label="邮箱" width="120" />
+    <el-table-column prop="phone" label="电话" width="120" />
+    <el-table-column prop="state" label="状态" width="120" />
+    <el-table-column prop="address" label="地址" width="300" />
+
+    <el-table-column fixed="right" label="操作" width="120">
       <template #default>
-        <el-button link type="primary" size="small" @click="handleB1click"
-          >Detail</el-button
+        <el-button link type="primary" size="small" @click="handleB1click" style="color:red">删除</el-button
         >
-        <el-button link type="primary" size="small">Edit</el-button>
+        <el-button link type="primary" size="small">编辑</el-button>
       </template>
     </el-table-column>
   </el-table>
+  <el-dialog v-model="dialogFormVisible" :title="dialogType==='add'?'新增':'编辑'">
+    <el-form :model="tableForm">
+      <el-form-item label="姓名" :label-width="100">
+        <el-input v-model="tableForm.name" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="邮箱" :label-width="100">
+        <el-input v-model="tableForm.email" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="电话" :label-width="100">
+        <el-input v-model="tableForm.phone" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="状态" :label-width="100">
+        <el-input v-model="tableForm.state" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="地址" :label-width="100">
+        <el-input v-model="tableForm.address" autocomplete="off" />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button type="primary" @click="dialogConfirm"
+          >确认</el-button
+        >
+      </span>
+    </template>
+  </el-dialog>
 </div>
 
 </template>
@@ -39,61 +64,84 @@ style="width: 100%"
 <script setup>
     //**数据
     import{ref} from "vue";
-    let qryInput =ref("");
-    let tableData =ref([{
-    date: '2016-05-03',
+    //用了$ref后不能watch监听
+    let qryInput =$ref("");
+    let tableData =$ref([
+      {
+    id: '1',
     name: 'Tom',
+    email:'123@qq.com',
+    phone:'13800138000',
     state: 'California',
-    city: 'Los Angeles',
     address: 'No. 189, Grove St, Los Angeles',
-    zip: 'CA 90036',
-    tag: 'Home',
   },
   {
-    date: '2016-05-02',
-    name: 'Tom',
+    id: '2',
+    name: 'Tom2',
+    email:'123@qq.com',
+    phone:'13800138000',
     state: 'California',
-    city: 'Los Angeles',
     address: 'No. 189, Grove St, Los Angeles',
-    zip: 'CA 90036',
-    tag: 'Office',
   },
   {
-    date: '2016-05-04',
-    name: 'Tom',
+    id: '3',
+    name: 'Tom3',
+    email:'123@qq.com',
+    phone:'13800138000',
     state: 'California',
-    city: 'Los Angeles',
     address: 'No. 189, Grove St, Los Angeles',
-    zip: 'CA 90036',
-    tag: 'Home',
   },
   {
-    date: '2016-05-01',
-    name: 'Tom',
+    id: '4',
+    name: 'Tom4',
+    email:'123@qq.com',
+    phone:'13800138000',
     state: 'California',
-    city: 'Los Angeles',
     address: 'No. 189, Grove St, Los Angeles',
-    zip: 'CA 90036',
-    tag: 'Office',
   },])
-    let multipleSelection = ref([]) 
-  //**方法
+    let multipleSelection = $ref([]) 
+    let dialogFormVisible =$ref(false)
+    let tableForm=$ref({
+      name:"张三",
+      email:"123@qq.com",
+      phone:"1380013800",
+      state:"在职",
+      address:"广东省",
+    })
+    let dialogType=$ref("add")
+    //**方法
     const handleB1click=()=>{
         console.log("click")
     }
     const handleSelectionChange=(val)=>{
-      multipleSelection.value=val
+      multipleSelection=val
       console.log(val)
     }
-    
+    const handleAdd=()=>{
+      dialogFormVisible =true
+      tableForm = {}
+      console.log(dialogFormVisible)
+    }
+    const dialogConfirm=()=>{
+      dialogFormVisible = false
+      //1.拿到数据
+      //2.将数据写到table
+      tableData.push({
+        ID:(tableData.lenght+1).toString(),
+      ...tableForm})
+      console.log(tableData)
+    }
+
+
 </script>
 <style scoped >
-.table-box{
-    width:800px;
-    position:absolute;
+    /*position:absolute;
     top:50%;
     left:50%;
-    transform:translate(-50%,-50%);
+    transform:translate(-50%,-50%);*/
+.table-box{
+    width:800px;
+    margin:200px auto;/*修改块状背景*/
 }
 .title{
     text-align:center;
@@ -103,7 +151,7 @@ style="width: 100%"
     justify-content: space-between;
     margin-bottom: 20px;
 }
-.el-input{
+.query-Input{
     width:200px
 }
 </style>
