@@ -10,7 +10,13 @@
         <el-button type="primary">增加</el-button>
     </div>
 <!--标题-->
-<el-table :data="tableData" style="width: 100%" border>
+<el-table  border
+ref="multipleTableRef"
+:data="tableData" 
+style="width: 100%"
+@selection-change ="handleSelectionChange"
+>
+    <el-table-column type="selection" width="55" />
     <el-table-column fixed prop="date" label="Date" width="150" />
     <el-table-column prop="name" label="Name" width="120" />
     <el-table-column prop="state" label="State" width="120" />
@@ -70,10 +76,16 @@
     zip: 'CA 90036',
     tag: 'Office',
   },])
-    //**方法
-    let handleB1click=()=>{
+    let multipleSelection = ref([]) 
+  //**方法
+    const handleB1click=()=>{
         console.log("click")
     }
+    const handleSelectionChange=(val)=>{
+      multipleSelection.value=val
+      console.log(val)
+    }
+    
 </script>
 <style scoped >
 .table-box{
