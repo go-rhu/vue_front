@@ -30,7 +30,7 @@ style="width: 100%"
       <template #default="scope">
         <el-button link type="primary" size="small" @click="handleDelOne(scope.row)" style="color:red">删除</el-button
         >
-        <el-button link type="primary" size="small">编辑</el-button>
+        <el-button link type="primary" size="small" @click="handleEdit(scope.row)">编辑</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -144,6 +144,7 @@ style="width: 100%"
     const handleAdd=()=>{
       dialogFormVisible =true
       tableForm = {}
+      dialogType="add"
       console.log(dialogFormVisible)
     }
     //确认增加一行数据
@@ -151,12 +152,26 @@ style="width: 100%"
       dialogFormVisible = false
       //1.拿到数据
       //2.将数据写到table
+      if (dialogType==='add'){
       tableData.push({
         ID:(tableData.lenght+1).toString(),
       ...tableForm})
       console.log(tableData)
+      }else{
+        //获取到当前的索引，替换当前索引值对应的数据
+        let index=tableData.findIndex(item=>item.id===tableForm.id)
+        console.log(index);
+        tableData[index]=tableForm
+      }
     }
-
+    const handleEdit=(row)=>{
+      //显示弹窗
+      dialogFormVisible = true
+      //更改全局变量
+      dialogType="edit"
+      //行赋值
+      tableForm={...row}
+    }
 
 </script>
 <style scoped >
