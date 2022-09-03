@@ -7,7 +7,10 @@
     </div>
     <div class="query-box">
         <el-input class="query-Input" v-model="qryInput" placeholder="请输入姓名搜索" />
-        <el-button type="primary" @click="handleAdd">增加</el-button>
+    <div class="btn_list">
+      <el-button type="danger" @click="handleDelList" v-if="multipleSelection.length>0">删除多选</el-button>
+      <el-button type="primary" @click="handleAdd">增加</el-button>
+    </div>
     </div>
 <!--table-->
 <el-table  border
@@ -24,8 +27,8 @@ style="width: 100%"
     <el-table-column prop="address" label="地址" width="300" />
 
     <el-table-column fixed="right" label="操作" width="120">
-      <template #default>
-        <el-button link type="primary" size="small" @click="handleB1click" style="color:red">删除</el-button
+      <template #default="scope">
+        <el-button link type="primary" size="small" @click="handleDelOne(scope.row)" style="color:red">删除</el-button
         >
         <el-button link type="primary" size="small">编辑</el-button>
       </template>
@@ -110,18 +113,40 @@ style="width: 100%"
     })
     let dialogType=$ref("add")
     //**方法
-    const handleB1click=()=>{
-        console.log("click")
+    //删除一条
+    const handleDelList=()=>{
+      multipleSelection.forEach(
+        id=>{
+          handleDelOne({id})
+        })
+        multipleSelection=[]
     }
+    //删除一条
+    const handleDelOne=({id})=>{
+        console.log(id)
+        //1.通过ID获取条目对应的索引值
+        let index =tableData.findIndex(item=>item.id===id)
+        console.log(index)
+        //2.通过索引值删除对应的条目
+        tableData.splice(index,1)
+    }
+    //选中一条
     const handleSelectionChange=(val)=>{
-      multipleSelection=val
-      console.log(val)
+      //multipleSelection=val
+      //console.log(val)
+      multipleSelection=[]
+      val.forEach(item=>{
+        multipleSelection.push(item.id)
+      })
+      console.log(multipleSelection)
     }
+    //新增一行准备
     const handleAdd=()=>{
       dialogFormVisible =true
       tableForm = {}
       console.log(dialogFormVisible)
     }
+    //确认增加一行数据
     const dialogConfirm=()=>{
       dialogFormVisible = false
       //1.拿到数据
